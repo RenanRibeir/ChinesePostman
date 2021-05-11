@@ -1,11 +1,47 @@
 #include <iostream>
 #include <math.h> 
 #include <vector>
-#include "Grafo.h"
 using namespace std;
 
 #define TAM 9
-#define INF 2147483647
+#define INF 9999
+
+int dijkstra(int G[TAM][TAM],int n,int startnode,int des) {
+   int cost[TAM][TAM],distance[TAM],pred[TAM];
+   int visited[TAM],count,mindistance,nextnode,i,j;
+   for(i=0;i<n;i++)
+      for(j=0;j<n;j++)
+   if(G[i][j]==0)
+      cost[i][j]=INF;
+   else
+      cost[i][j]=G[i][j];
+   for(i=0;i<n;i++) {
+      distance[i]=cost[startnode][i];
+      pred[i]=startnode;
+      visited[i]=0;
+   }
+   distance[startnode]=0;
+   visited[startnode]=1;
+   count=1;
+   while(count<n-1) {
+      mindistance=INF;
+      for(i=0;i<n;i++)
+         if(distance[i]<mindistance&&!visited[i]) {
+         mindistance=distance[i];
+         nextnode=i;
+      }
+      visited[nextnode]=1;
+      for(i=0;i<n;i++)
+         if(!visited[i])
+      if(mindistance+cost[nextnode][i]<distance[i]) {
+         distance[i]=mindistance+cost[nextnode][i];
+         pred[i]=nextnode;
+      }
+      count++;
+   }
+
+   return distance[des];
+}
 
 int minDistance(int dist[], bool sptSet[])
 {
@@ -201,11 +237,15 @@ int main()
     //gerar pares
     vector<par> pares[qtd_impares];
     par t;
+
+    cout << "----------Pares Impares-----------" <<endl;
+    cout << endl;
+
     for(int i = 0;i < qtd_impares - 1;i++)
     {
         for(int j = i+1;j<qtd_impares;j++)
         {
-            cout << imp[i] << " " <<imp[j]<<"\n";
+            cout << imp[i] << ":"<<imp[j]<<"\n";
             t._0 = imp[i];
             t._1 = imp[j];
             pares[i].push_back(t);
@@ -218,32 +258,16 @@ int main()
         for(int j = 0; j < TAM;j++)
             matriz_distancia_e[i][j] = matriz_distancia[i][j];
 
-    Grafo gra(TAM);
-
-    gra.addAresta(4,5,5);
-    gra.addAresta(0,1,6);
-    gra.addAresta(1,2,7);
-    gra.addAresta(0,3,3);
-    gra.addAresta(1,4,2);
-    gra.addAresta(2,5,3);
-    gra.addAresta(3,4,6);
-    gra.addAresta(3,6,5);
-    gra.addAresta(4,7,6);
-    gra.addAresta(5,8,4);
-    gra.addAresta(6,7,10);
-    gra.addAresta(7,8,5);
-
     for(int i = 0,k = qtd_impares-1;i < qtd_impares-1;i++){
         for(int j = 0;j<k;j++){
             cout << pares[i][j]._0 << ":"<< pares[i][j]._1 <<"\n";
-            int menor =gra.dijkstra(pares[i][j]._0,pares[i][j]._1);
-            cout << "menor"<<menor<<"\n";
+            int menor = dijkstra(matriz_distancia,9,pares[i][j]._0,pares[i][j]._1);
             matriz_distancia_e[pares[i][j]._0][pares[i][j]._1] = menor;
             matriz_distancia_e[pares[i][j]._1][pares[i][j]._0] = menor;
         }
         k--;
-     }
-
+    }    
+    cout << endl <<"--Menor Caminho do grafo Eulirizado--"<< endl << endl;
     int peso = fleuryAlgorithm(matriz_distancia_e,1);
-    cout << "Peso total: " << peso;
+    cout << endl<<"Peso total: " <<  endl <<peso;
 }
