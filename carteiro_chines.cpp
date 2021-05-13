@@ -199,12 +199,6 @@ int main()
 {
 
 
-   /*int matriz_distancia[TAM][TAM] = {{0,1,4,0,2},
-                                      {1,0,0,3,3},
-                                      {4,0,0,1,3},
-                                      {0,3,1,0,2},
-                                      {2,3,3,2,0}};*/
-
    int matriz_distancia[TAM][TAM] = {{0, 6, 0, 3, 0, 0, 0, 0, 0},
                                      {6, 0, 7, 0, 2, 0, 0, 0, 0},
                                      {0, 7, 0, 0, 0, 3, 0, 0, 0},
@@ -264,7 +258,7 @@ int main()
          vet[j]._1 = pares[i][j]._1;
          vet[j].peso = d;
       }
-      
+
       par m = min(vet);
 
       cout << m._0 << " " << m._1<<  " " << m.peso<<endl;
