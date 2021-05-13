@@ -10,6 +10,7 @@ struct par
 {
    int _0;
    int _1;
+   int peso = INF;
 };
 
 int dijkstra(int G[TAM][TAM], int n, int startnode, int des)
@@ -76,6 +77,17 @@ int min(int vet[])
    return min;
 }
 
+par min(par vet[])
+{
+   par min;
+   min.peso = INF;
+   for (int v = 0; v < TAM; v++)
+      if (vet[v].peso <= min.peso)
+         min = vet[v];
+
+   return min;
+}
+
 int menor_caminho(int g[TAM][TAM], int ori, int des)
 {
 
@@ -130,7 +142,6 @@ int edgeCount(int tempGraph[TAM][TAM])
             count++;
    return count;
 }
-
 int fleuryAlgorithm(int tempGraph[TAM][TAM], int start)
 {
    static int edge = edgeCount(tempGraph);
@@ -161,7 +172,6 @@ int somar_vertices(int grafo[][TAM], int l)
    return w_sum;
 }
 
-
 vector<int> get_impares(int grafo[TAM][TAM], int l)
 {
    int degrees[l] = {};
@@ -188,6 +198,13 @@ vector<int> get_impares(int grafo[TAM][TAM], int l)
 int main()
 {
 
+
+   /*int matriz_distancia[TAM][TAM] = {{0,1,4,0,2},
+                                      {1,0,0,3,3},
+                                      {4,0,0,1,3},
+                                      {0,3,1,0,2},
+                                      {2,3,3,2,0}};*/
+
    int matriz_distancia[TAM][TAM] = {{0, 6, 0, 3, 0, 0, 0, 0, 0},
                                      {6, 0, 7, 0, 2, 0, 0, 0, 0},
                                      {0, 7, 0, 0, 0, 3, 0, 0, 0},
@@ -209,15 +226,6 @@ int main()
    vector<par> pares[qtd_impares];
    par t;
 
-   for (int i = 0; i < TAM - 1; i++)
-   {
-      for (int j = 0; j < TAM; j++)
-      {
-         cout << matriz_distancia[i][j] << " ";
-      }
-      cout << endl;
-   }
-
    cout << "----------Pares Impares-----------" << endl;
    cout << endl;
 
@@ -233,43 +241,40 @@ int main()
    }
 
    int matriz_distancia_e[TAM][TAM];
-   int vet[TAM],impar[TAM] = {};
+   int impar[TAM] = {};
 
    //copia grafo original para um que vai ser eurelizado
    for (int i = 0; i < TAM; i++)
       for (int j = 0; j < TAM; j++)
          matriz_distancia_e[i][j] = matriz_distancia[i][j];
 
-    for (int i = 0; i < imp.size(); i++){
-      impar[imp[i]] = true;
-    }
+    for (int i = 0; i < imp.size(); i++)
+         impar[imp[i]] = true;
+
    int j,menor = INF;
 
    for (int i = 0, k = qtd_impares - 1; i < qtd_impares - 1; i++)
    {
+      par vet[TAM];
       for (j = 0; j < k; j++)
       {
          cout << pares[i][j]._0 << ":" << pares[i][j]._1 << "\n";
-         int d = dijkstra(matriz_distancia, 9, pares[i][j]._0, pares[i][j]._1);
-         if(!impar[i] && !impar[j]){
-            matriz_distancia_e[pares[i][j]._0][pares[i][j]._1] = d;
-            matriz_distancia_e[pares[i][j]._1][pares[i][j]._0] = d;
-            impar[i] = !impar[i];
-            impar[j] = !impar[j];
-         }
-         if( matriz_distancia_e[pares[i][j]._0][pares[i][j]._1] > d)
-         {
-            matriz_distancia_e[pares[i][j]._0][pares[i][j]._1] = d;
-            matriz_distancia_e[pares[i][j]._1][pares[i][j]._0] = d;
-         }
+         int d = dijkstra(matriz_distancia, TAM, pares[i][j]._0, pares[i][j]._1);
+         vet[j]._0 = pares[i][j]._0;
+         vet[j]._1 = pares[i][j]._1;
+         vet[j].peso = d;
       }
+      
+      par m = min(vet);
+
+      cout << m._0 << " " << m._1<<  " " << m.peso<<endl;
+      matriz_distancia_e[m._0][m._1] = m.peso; 
+      matriz_distancia_e[m._1][m._0] = m.peso;
+
       k--;
    }
 
-
-   cout << endl;
-
-   for (int i = 0; i < TAM - 1; i++)
+   for (int i = 0; i < TAM ; i++)
    {
       for (int j = 0; j < TAM; j++)
       {
